@@ -41,4 +41,5 @@ export default function NoteDetailsClient() {
       </div>
     </div>
   );
-}
+
+  // renamed folder 
