@@ -1,5 +1,5 @@
 "use client";
-import { fetchNoteById } from "@/lib/api/clientApi";
+import { fetchNotes } from "@/lib/api/clientApi";
 import NoteList from "@/components/NoteList/NoteList";
 import Pagination from "@/components/Pagination/Pagination";
 import SearchBox from "@/components/SearchBox/SearchBox";
@@ -28,7 +28,7 @@ export default function NotesClient({
 
   const loadNotes = useQuery({
     queryKey: ["Notes", debouncedQuery, currentPage, tag],
-    queryFn: () => fetchNoteById(debouncedQuery, currentPage, tag),
+    queryFn: () => fetchNotes(debouncedQuery, currentPage, tag),
     initialData: initialResponse,
     placeholderData: keepPreviousData,
     refetchOnMount: false,

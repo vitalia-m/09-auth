@@ -64,9 +64,8 @@ export async function fetchNotes(
   return response.data;
 }
 export type GetNotesResponse = {
-  email: string;
-  password: string;
-  message?: string;
+  notes: Note[];
+  totalPages: number;
 };
 export async function fetchNoteById(id: number): Promise<Note> {
   const response = await serverApi.get<Note>(`notes/${id}`, {
