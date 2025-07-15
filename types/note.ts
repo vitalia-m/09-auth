@@ -5,6 +5,8 @@ export type Note = {
   createdAt: string;
   updatedAt: string;
   userId: string;
+  tag: string;
+  message?: string;
 };
 
 export interface NoteFormData {

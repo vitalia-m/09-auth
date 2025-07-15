@@ -1,7 +1,12 @@
 import axios from "axios";
 import type { Note } from "../../types/note";
 
-export const api = axios.create({
+export const serverApi = axios.create({
+  baseURL: `${process.env.NEXT_PUBLIC_API_URL}/api`,
+  withCredentials: true,
+  headers: { "Content-Type": "application/json" },
+});
+export const clientApi = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_URL}/api`,
   withCredentials: true,
   headers: { "Content-Type": "application/json" },

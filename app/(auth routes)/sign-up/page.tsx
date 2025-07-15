@@ -6,45 +6,31 @@ import { register, RegisterRequest, getMe } from "@/lib/api/clientApi";
 import css from "./SignUpPage.module.css";
 import { useAuthStore } from "@/lib/store/authStore";
 
-export default function SignUpPage() {
+const SignUpPage = () => {
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
-  const setUser = useAuthStore((state) => state.setUser);
+  const [error, setError] = useState("");
+  const { setIsAuthenticated, setUser } = useAuthStore.getState();
 
   const handleSubmit = async (formData: FormData) => {
     try {
-      const regData: RegisterRequest = {
-        email: formData.get("email") as string,
-        password: formData.get("password") as string,
+      const formValues: RegisterRequest = {
+        email: String(formData.get("email")),
+        password: String(formData.get("password")),
       };
-
-      const res = await register(regData);
+      await register(formValues);
+      setIsAuthenticated(true);
       const user = await getMe();
-
-      if (res.email) {
-        setUser(user);
-        router.push("/profile");
-      } else if ("message" in res) {
-        setError(res.message);
-      } else {
-        setError("Invalid email or password");
-      }
-    } catch {
+      setUser(user);
+      router.push("/profile");
+    } catch (err) {
+      console.error("error", err);
       setError("Invalid email or password");
     }
   };
-
   return (
     <main className={css.mainContent}>
-      <form
-        className={css.form}
-        onSubmit={(e) => {
-          e.preventDefault();
-          const formData = new FormData(e.currentTarget);
-          handleSubmit(formData);
-        }}
-      >
-        <h1 className={css.formTitle}>Sign up</h1>
+      <h1 className={css.formTitle}>Sign up</h1>
+      <form action={handleSubmit} className={css.form}>
         <div className={css.formGroup}>
           <label htmlFor="email">Email</label>
           <input
@@ -73,8 +59,10 @@ export default function SignUpPage() {
           </button>
         </div>
 
-        {error && <p className={css.error}>{error}</p>}
+        <p className={css.error}>{error && <p>{error}</p>}</p>
       </form>
     </main>
   );
-}
+};
+
+export default SignUpPage;

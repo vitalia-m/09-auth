@@ -6,7 +6,7 @@ import css from "./NoteForm.module.css";
 import * as Yup from "yup";
 import { type NoteFormData } from "@/types/note";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { createNote } from "@/lib/api";
+import { createNote } from "@/lib/api/clientApi";
 import { useNoteDraftStore } from "@/lib/store/noteStore";
 
 const NoteFormSchema = Yup.object().shape({
@@ -43,7 +43,13 @@ export default function NoteForm({ onClose }: NoteFormProps) {
   }, [pathname, draft, setDraft]);
 
   const addNewNote = useMutation({
-    mutationFn: (newNoteData: NoteFormData) => createNote(newNoteData),
+    mutationFn: (newNoteData: NoteFormData) => {
+      const formData = new FormData();
+      formData.append("title", newNoteData.title);
+      formData.append("content", newNoteData.content);
+      formData.append("tag", newNoteData.tag);
+      return createNote(formData);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["Notes"] });
       clearDraft();
