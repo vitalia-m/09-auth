@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    remotePatterns: [{ hostname: "ac.goit.global" }],
+    domains: ["ac.goit.global"],
   },
 };
 
