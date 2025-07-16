@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: `NoteHub - ${user.userName}`,
       description:
         "Quickly add a new note and keep your ideas organized in NotesHub.",
-      url: "https://08-zustand-ten-jet.vercel.app/profile",
+      url: "https://09-auth-phi.vercel.app",
       images: [
         {
           url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",

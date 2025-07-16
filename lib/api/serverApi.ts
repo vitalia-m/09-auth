@@ -3,7 +3,7 @@ import {
   type GetNotesResponse,
   type GetNotesRequest,
   ServerBoolResponse,
-  serverApi,
+  nextServer,
 } from "./api";
 import { type Note } from "@/types/note";
 import { type User } from "@/types/user";
@@ -11,7 +11,7 @@ import { type User } from "@/types/user";
 export async function fetchNotes(
   query: string,
   page: number,
-  tag?: string
+  tag?: string | undefined
 ): Promise<GetNotesResponse> {
   const cookieStore = await cookies();
   const noteSearchParams: GetNotesRequest = {
@@ -27,7 +27,7 @@ export async function fetchNotes(
   if (query.trim() !== "") {
     noteSearchParams.params.search = query.trim();
   }
-  const response = await serverApi.get<GetNotesResponse>(
+  const response = await nextServer.get<GetNotesResponse>(
     "notes/",
     noteSearchParams
   );
@@ -37,7 +37,7 @@ export async function fetchNotes(
 
 export async function fetchNoteById(id: string): Promise<Note> {
   const cookieStore = await cookies();
-  const response = await serverApi.get<Note>(`notes/${id}`, {
+  const response = await nextServer.get<Note>(`notes/${id}`, {
     headers: {
       Cookie: cookieStore.toString(),
     },
@@ -48,20 +48,20 @@ export async function fetchNoteById(id: string): Promise<Note> {
 
 export const getMe = async () => {
   const cookieStore = await cookies();
-  const res = await serverApi.get<User>("/users/me", {
+  const response = await nextServer.get<User>("/users/me", {
     headers: {
       Cookie: cookieStore.toString(),
     },
   });
-  return res.data;
+  return response.data;
 };
 
 export const checkServerSession = async () => {
   const cookieStore = await cookies();
-  const res = await serverApi.get<ServerBoolResponse>("/auth/session", {
+  const response = await nextServer.get<ServerBoolResponse>("/auth/session", {
     headers: {
       Cookie: cookieStore.toString(),
     },
   });
-  return res;
+  return response;
 };
