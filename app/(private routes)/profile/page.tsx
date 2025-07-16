@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
       title: `NoteHub - ${user.userName}`,
       description:
         "Quickly add a new note and keep your ideas organized in NotesHub.",
-      url: "https://09-auth-phi.vercel.app",
+      url: "https://09-auth-phi.vercel.app/profile",
       images: [
         {
           url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
@@ -36,7 +36,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Profile() {
   const user = await getMe();
-  const avatarUrl = user?.avatar ?? "/default-avatar.png";
+  const avatarUrl = user.avatar ?? "/avatar.webp";
   return (
     <main className={css.mainContent}>
       <div className={css.profileCard}>
