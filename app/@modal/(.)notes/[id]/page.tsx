@@ -16,7 +16,7 @@ export default async function NotePreview({ params }: NoteDetailsProps) {
 
   await queryClient.prefetchQuery({
     queryKey: ["Note", parseInt(id)],
-    queryFn: () => fetchNoteById(parseInt(id)),
+    queryFn: () => fetchNoteById(id),
   });
 
   const dehydratedState = dehydrate(queryClient);
