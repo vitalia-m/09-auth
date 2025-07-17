@@ -94,7 +94,7 @@ export interface CreateNoteData {
   content: string;
   tag?: string;
 }
-export async function createNote(data: CreateNoteData): Promise<Note> {
+export async function createNote(data: FormData): Promise<Note> {
   const response = await nextServer.post<Note>("/notes/", data, {
     withCredentials: true,
   });
