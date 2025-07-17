@@ -40,7 +40,6 @@ export default function EditProfile() {
       setErrorMessage("");
 
       const newData: NewUserData = {
-        email: user.email,
         username,
       };
 
