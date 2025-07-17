@@ -17,7 +17,6 @@ export type RegisterResponse = {
   password?: string;
   message?: string;
 };
-
 export const register = async (data: RegisterRequest) => {
   const res = await nextServer.post<RegisterResponse>("/auth/register", data);
   return res.data;
@@ -39,6 +38,7 @@ export async function login(data: LoginRequest): Promise<User> {
   const res = await nextServer.post<User>("/auth/login", data);
   return res.data;
 }
+
 // --- Logout ---
 export type LogoutResponse = {
   message?: string;
@@ -48,11 +48,13 @@ export const logout = async () => {
   const res = await nextServer.post<LogoutResponse>("/auth/logout");
   return res.data;
 };
+
 // --- Get Current User ---
 export async function getMe(): Promise<User> {
   const res = await nextServer.get<User>("/users/me");
   return res.data;
 }
+
 // --- Session Check ---
 export const checkSession = async (): Promise<ServerBoolResponse> => {
   const res = await nextServer.get<ServerBoolResponse>("/auth/session", {
@@ -60,6 +62,7 @@ export const checkSession = async (): Promise<ServerBoolResponse> => {
   });
   return res.data;
 };
+
 // --- Fetch Notes ---
 export async function fetchNotes(
   query: string,
@@ -74,20 +77,19 @@ export async function fetchNotes(
   if (query.trim() !== "") {
     noteSearchParams.search = query.trim();
   }
-  const response = await nextServer.get<GetNotesResponse>("notes/", {
+  const response = await nextServer.get<GetNotesResponse>("/notes", {
     params: noteSearchParams,
     withCredentials: true,
   });
 
   return response.data;
 }
+
 // --- Fetch Note by ID ---
 export async function fetchNoteById(id: string): Promise<Note> {
-  const response = await nextServer.get<Note>(`notes/${id}`, {
+  const response = await nextServer.get<Note>(`/notes/${id}`, {
     withCredentials: true,
   });
-  console.log(response.data);
-
   return response.data;
 }
 
@@ -97,19 +99,22 @@ export interface CreateNoteData {
   content: string;
   tag?: string;
 }
+
 export async function createNote(data: NoteFormData): Promise<Note> {
-  const response = await nextServer.post<Note>("/notes/", data, {
+  const response = await nextServer.post<Note>("/notes", data, {
     withCredentials: true,
   });
   return response.data;
 }
+
 // --- Remove Note ---
 export async function removeNote(id: string): Promise<Note> {
-  const response = await nextServer.delete<Note>(`notes/${id}`, {
+  const response = await nextServer.delete<Note>(`/notes/${id}`, {
     withCredentials: true,
   });
   return response.data;
 }
+
 // --- Edit User ---
 export type NewUserData = {
   username: string;
@@ -126,10 +131,9 @@ export async function editUser(
   newData: NewUserData
 ): Promise<NewUserDataResponse> {
   const response = await nextServer.patch<NewUserDataResponse>(
-    "users/me",
+    "/users/me",
     newData,
     { withCredentials: true }
   );
-
   return response.data;
 }
