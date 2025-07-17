@@ -1,5 +1,5 @@
 import type { User } from "@/types/user";
-import type { Note } from "@/types/note";
+import type { Note, NoteFormData } from "@/types/note";
 import {
   type GetNotesRequest,
   type GetNotesResponse,
@@ -94,7 +94,7 @@ export interface CreateNoteData {
   content: string;
   tag?: string;
 }
-export async function createNote(data: FormData): Promise<Note> {
+export async function createNote(data: NoteFormData): Promise<Note> {
   const response = await nextServer.post<Note>("/notes/", data, {
     withCredentials: true,
   });
