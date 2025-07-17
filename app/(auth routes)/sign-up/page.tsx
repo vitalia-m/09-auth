@@ -8,29 +8,37 @@ import { useAuthStore } from "@/lib/store/authStore";
 
 const SignUpPage = () => {
   const router = useRouter();
-  const [error, setError] = useState("");
-  const { setIsAuthenticated, setUser } = useAuthStore.getState();
+  const [error, setError] = useState<string | null>(null);
+  const setUser = useAuthStore((state) => state.setUser);
 
   const handleSubmit = async (formData: FormData) => {
     try {
-      const formValues: RegisterRequest = {
-        email: String(formData.get("email")),
-        password: String(formData.get("password")),
-      };
-      await register(formValues);
-      setIsAuthenticated(true);
+      const regData = Object.fromEntries(formData) as RegisterRequest;
+      const res = await register(regData);
       const user = await getMe();
-      setUser(user);
-      router.push("/profile");
-    } catch (err) {
-      console.error("error", err);
+      if (res.email) {
+        setUser(user);
+        router.push("/profile");
+      } else if (res.message) {
+        setError(res.message);
+      } else {
+        setError("Invalid email or password");
+      }
+    } catch {
       setError("Invalid email or password");
     }
   };
   return (
     <main className={css.mainContent}>
       <h1 className={css.formTitle}>Sign up</h1>
-      <form action={handleSubmit} className={css.form}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          const formData = new FormData(e.currentTarget);
+          handleSubmit(formData);
+        }}
+        className={css.form}
+      >
         <div className={css.formGroup}>
           <label htmlFor="email">Email</label>
           <input
@@ -59,7 +67,7 @@ const SignUpPage = () => {
           </button>
         </div>
 
-        <p className={css.error}>{error && <p>{error}</p>}</p>
+        {error && <p className={css.error}>{error}</p>}
       </form>
     </main>
   );

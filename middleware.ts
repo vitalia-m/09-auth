@@ -1,11 +1,12 @@
 // middleware.ts
 
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 import { cookies } from "next/headers";
 import { parse } from "cookie";
-import { checkServerSession } from "./lib/api/serverApi";
+import { checkSession } from "./lib/api/serverApi";
 
-const privateRoutes = ["/profile"];
+const privateRoutes = ["/profile", "/notes"];
 const publicRoutes = ["/sign-in", "/sign-up"];
 
 export async function middleware(request: NextRequest) {
@@ -14,18 +15,17 @@ export async function middleware(request: NextRequest) {
   const accessToken = cookieStore.get("accessToken")?.value;
   const refreshToken = cookieStore.get("refreshToken")?.value;
 
-  const isPublicRoute = publicRoutes.some((route) =>
-    pathname.startsWith(route)
-  );
+  const isPublicRoute = publicRoutes.some((route) => pathname.includes(route));
+
   const isPrivateRoute = privateRoutes.some((route) =>
-    pathname.startsWith(route)
+    pathname.includes(route)
   );
 
   if (!accessToken) {
     if (refreshToken) {
       // Якщо accessToken відсутній, але є refreshToken — потрібно перевірити сесію навіть для публічного маршруту,
       // адже сесія може залишатися активною, і тоді потрібно заборонити доступ до публічного маршруту.
-      const data = await checkServerSession();
+      const data = await checkSession();
       const setCookie = data.headers["set-cookie"];
 
       if (setCookie) {
@@ -45,7 +45,7 @@ export async function middleware(request: NextRequest) {
         // Якщо сесія все ще активна:
         // для публічного маршруту — виконуємо редірект на головну.
         if (isPublicRoute) {
-          return NextResponse.redirect(new URL("/", request.url), {
+          return NextResponse.redirect(new URL("/", request.nextUrl.origin), {
             headers: {
               Cookie: cookieStore.toString(),
             },
@@ -69,14 +69,15 @@ export async function middleware(request: NextRequest) {
 
     // приватний маршрут — редірект на сторінку входу
     if (isPrivateRoute) {
-      return NextResponse.redirect(new URL("/sign-in", request.url));
+      return NextResponse.redirect(new URL("/sign-in", request.nextUrl.origin));
     }
   }
 
   // Якщо accessToken існує:
   // публічний маршрут — виконуємо редірект на головну
+
   if (isPublicRoute) {
-    return NextResponse.redirect(new URL("/", request.url));
+    return NextResponse.redirect(new URL("/", request.nextUrl.origin));
   }
   // приватний маршрут — дозволяємо доступ
   if (isPrivateRoute) {
@@ -85,5 +86,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/profile/:path*", "/sign-in", "/sign-up"],
+  matcher: ["/profile/:path*", "/notes/:path*", "/sign-in", "/sign-up"],
 };

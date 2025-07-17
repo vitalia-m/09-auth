@@ -56,7 +56,7 @@ export const getMe = async () => {
   return response.data;
 };
 
-export const checkServerSession = async () => {
+export const checkSession = async () => {
   const cookieStore = await cookies();
   const response = await nextServer.get<ServerBoolResponse>("/auth/session", {
     headers: {
