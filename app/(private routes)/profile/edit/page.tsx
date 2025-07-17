@@ -40,7 +40,8 @@ export default function EditProfile() {
       setErrorMessage("");
 
       const newData: NewUserData = {
-        username: username.trim(),
+        email: user.email,
+        username,
       };
 
       await editUser(newData);

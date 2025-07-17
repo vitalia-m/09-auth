@@ -12,7 +12,11 @@ export type RegisterRequest = {
   email: string;
   password: string;
 };
-
+export type RegisterResponse = {
+  email?: string;
+  password?: string;
+  message?: string;
+};
 export async function register(data: RegisterRequest): Promise<User> {
   const res = await nextServer.post<User>("/auth/register", data);
   return res.data;
@@ -99,11 +103,13 @@ export async function removeNote(id: string): Promise<Note> {
 // --- Edit User ---
 export type NewUserData = {
   username: string;
+  email: string;
 };
 
 export type NewUserDataResponse = {
   username: string;
-  avatar?: string;
+  email: string;
+  avatar: string;
 };
 
 export async function editUser(
